@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Europe 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f7;color:#1c1c1e}
+.hub{max-width:680px;margin:0 auto;padding-bottom:3rem}
+.hero{background:#fff;padding:1.1rem 1.25rem 0.9rem;border-bottom:1px solid #e5e5ea}
+.hero h1{font-size:20px;font-weight:700;color:#1c1c1e}
+.hero p{font-size:13px;color:#6e6e73;margin-top:3px}
+.depart{display:inline-block;margin-top:8px;background:#e8f0fe;color:#1a56db;font-size:12px;font-weight:600;padding:3px 11px;border-radius:20px}
+input.tab-radio{display:none}
+.tab-wrap{background:#fff;border-bottom:1px solid #e5e5ea;position:sticky;top:0;z-index:20}
+.tab-bar{display:flex;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab-label{padding:12px 13px;font-size:13px;font-weight:500;color:#6e6e73;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;flex-shrink:0;display:block}
+#t1:checked ~ .hub .tab-wrap label[for=t1],
+#t2:checked ~ .hub .tab-wrap label[for=t2],
+#t3:checked ~ .hub .tab-wrap label[for=t3],
+#t4:checked ~ .hub .tab-wrap label[for=t4],
+#t5:checked ~ .hub .tab-wrap label[for=t5],
+#t6:checked ~ .hub .tab-wrap label[for=t6]{color:#1c1c1e;border-bottom-color:#1c1c1e;font-weight:700}
+.panels .panel{display:none;padding:1rem 1.25rem}
+#t1:checked ~ .hub .panels #p1,
+#t2:checked ~ .hub .panels #p2,
+#t3:checked ~ .hub .panels #p3,
+#t4:checked ~ .hub .panels #p4,
+#t5:checked ~ .hub .panels #p5,
+#t6:checked ~ .hub .panels #p6{display:block}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.stat{background:#fff;border:1px solid #e5e5ea;border-radius:12px;padding:12px;text-align:center}
+.stat-val{font-size:22px;font-weight:700;color:#1c1c1e}
+.stat-label{font-size:11px;color:#8e8e93;margin-top:2px}
+.rdiv{display:flex;align-items:center;gap:8px;margin:14px 0 6px}
+.rline{flex:1;height:1px;background:#e5e5ea}
+.rname{font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.day-card{background:#fff;border:1px solid #e5e5ea;border-radius:12px;margin-bottom:8px;overflow:hidden}
+input.day-chk{display:none}
+.day-header{display:flex;align-items:center;gap:8px;padding:11px 14px;cursor:pointer;user-select:none}
+.day-header:active{background:#f5f5f7}
+.day-date{font-size:12px;font-weight:500;color:#8e8e93;min-width:52px;flex-shrink:0}
+.day-title{font-size:14px;font-weight:500;color:#1c1c1e;flex:1}
+.day-tag{font-size:11px;font-weight:600;padding:2px 9px;border-radius:20px;flex-shrink:0}
+.tc{background:#fee2e2;color:#991b1b}
+.td{background:#dbeafe;color:#1e40af}
+.tf{background:#ede9fe;color:#5b21b6}
+.tb{background:#dcfce7;color:#166534}
+.chev{font-size:13px;color:#8e8e93;transition:transform .2s;flex-shrink:0}
+.day-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+input.day-chk:checked ~ .day-header .chev{transform:rotate(180deg)}
+input.day-chk:checked ~ .day-body{max-height:800px}
+.day-inner{padding:0 14px 12px}
+.flight-banner{background:#f0f4ff;border-radius:8px;padding:8px 12px;margin-bottom:8px;margin-top:4px}
+.flight-banner .fb-row{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.flight-banner .fb-row:last-child{margin-bottom:0}
+.fb-label{font-size:11px;font-weight:600;color:#6e6e73;min-width:72px}
+.fb-val{font-size:13px;color:#1c1c1e;font-weight:500}
+.fb-ref{font-size:11px;color:#8e8e93;margin-left:auto}
+.di{font-size:13px;color:#48484a;padding:3px 0 3px 16px;position:relative;line-height:1.5}
+.di::before{content:"·";position:absolute;left:4px;color:#8e8e93}
+.di.al{color:#991b1b;font-weight:600}
+.di.al::before{content:"⚠";left:0;font-size:11px}
+.sh{font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:.06em;margin:1.2rem 0 .5rem}
+.sh:first-child{margin-top:0}
+.leg-head{display:flex;align-items:center;gap:8px;margin:1rem 0 .5rem}
+.leg-line{flex:1;height:1px;background:#e5e5ea}
+.leg-name{font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap}
+.fcard{background:#fff;border:1px solid #e5e5ea;border-radius:12px;margin-bottom:8px;overflow:hidden}
+.fcard-head{padding:10px 14px 6px}
+.fcard-route{font-size:15px;font-weight:700;color:#1c1c1e;margin-bottom:2px}
+.fcard-airline{font-size:12px;color:#6e6e73}
+.fcard-body{display:flex;gap:0;border-top:1px solid #f2f2f7}
+.fblock{flex:1;padding:8px 14px;border-right:1px solid #f2f2f7}
+.fblock:last-child{border-right:none}
+.fblock-label{font-size:10px;font-weight:600;color:#8e8e93;text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.fblock-val{font-size:14px;font-weight:600;color:#1c1c1e}
+.fblock-sub{font-size:11px;color:#8e8e93;margin-top:1px}
+.fcard-ref{padding:6px 14px 10px;display:flex;gap:16px;flex-wrap:wrap}
+.fref-item{font-size:12px;color:#6e6e73}
+.fref-item strong{color:#1c1c1e;font-weight:600}
+.fcard-checkin{background:#e8f0fe;padding:6px 14px;font-size:12px;color:#1a56db;font-weight:600}
+.layover{text-align:center;font-size:11px;color:#8e8e93;padding:4px 0;font-style:italic}
+.car-card{background:#fff;border:1px solid #e5e5ea;border-radius:12px;margin-bottom:12px;overflow:hidden}
+.car-header{background:#1c1c1e;padding:12px 16px}
+.car-header-title{font-size:15px;font-weight:700;color:#fff;margin-bottom:2px}
+.car-header-sub{font-size:12px;color:#a0a0a8}
+.car-conf{background:#e8f0fe;padding:6px 16px;font-size:12px;color:#1a56db;font-weight:600}
+.car-section{padding:12px 16px;border-bottom:1px solid #f2f2f7}
+.car-section:last-child{border-bottom:none}
+.car-section-title{font-size:11px;font-weight:700;color:#8e8e93;text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.car-row{display:flex;justify-content:space-between;align-items:flex-start;padding:4px 0}
+.car-row-label{font-size:13px;color:#6e6e73;flex:1}
+.car-row-val{font-size:13px;color:#1c1c1e;font-weight:500;text-align:right;flex:1}
+.car-alert{background:#fff7ed;border:1px solid #fed7aa;border-radius:8px;padding:8px 12px;margin-top:8px;font-size:12px;color:#9a3412;line-height:1.5}
+.car-tbc{background:#f5f5f7;border:1px dashed #c7c7cc;border-radius:12px;padding:20px;text-align:center;margin-bottom:12px}
+.car-tbc-title{font-size:15px;font-weight:700;color:#8e8e93;margin-bottom:4px}
+.car-tbc-sub{font-size:13px;color:#aeaeb2}
+.cr{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid #f2f2f7}
+.cr:last-child{border:none}
+.cr input{width:20px;height:20px;margin-top:1px;flex-shrink:0;accent-color:#1a56db}
+.cl{font-size:14px;color:#1c1c1e;line-height:1.45;flex:1}
+.ms{display:flex;gap:13px;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid #f2f2f7}
+.ms:last-child{border:none;margin:0;padding:0}
+.sn{width:30px;height:30px;border-radius:50%;background:#e8f0fe;color:#1a56db;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px}
+.st{font-size:11px;color:#8e8e93;font-weight:500;margin-bottom:2px}
+.stitle{font-size:14px;font-weight:700;color:#1c1c1e;margin-bottom:4px}
+.sd{font-size:13px;color:#48484a;line-height:1.6}
+.br{display:flex;flex-wrap:wrap;gap:7px;margin-top:6px}
+.badge{font-size:12px;font-weight:500;padding:4px 11px;border-radius:20px;background:#fff;border:1px solid #e5e5ea;color:#48484a}
+.note{font-size:12px;color:#8e8e93;margin-top:8px;line-height:1.5}
+.banner{background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:10px 14px;margin-top:1rem;font-size:13px;color:#9a3412;line-height:1.5}
+.cc{background:#fff;border:1px solid #e5e5ea;border-radius:10px;padding:12px 14px;font-family:monospace;font-size:15px;color:#1c1c1e;margin-bottom:6px}
+</style>
+</head>
+<body>
+<input class="tab-radio" type="radio" name="tab" id="t1" checked>
+<input class="tab-radio" type="radio" name="tab" id="t2">
+<input class="tab-radio" type="radio" name="tab" id="t3">
+<input class="tab-radio" type="radio" name="tab" id="t4">
+<input class="tab-radio" type="radio" name="tab" id="t5">
+<input class="tab-radio" type="radio" name="tab" id="t6">
+<div class="hub">
+  <div class="hero">
+    <h1>&#128506; Europe 2026</h1>
+    <p>Norway &middot; Denmark &middot; Amsterdam &middot; Ireland</p>
+    <span class="depart">&#9992; Departs 26 May</span>
+  </div>
+  <div class="tab-wrap">
+    <div class="tab-bar">
+      <label class="tab-label" for="t1">Run Sheet</label>
+      <label class="tab-label" for="t2">Flights</label>
+      <label class="tab-label" for="t3">Car Hire</label>
+      <label class="tab-label" for="t4">Media</label>
+      <label class="tab-label" for="t5">Pack</label>
+      <label class="tab-label" for="t6">Systems</label>
+    </div>
+  </div>
+  <div class="panels">
+
+    <!-- RUN SHEET -->
+    <div class="panel" id="p1">
+      <div class="stat-grid">
+        <div class="stat" style="border-top:3px solid #1a56db;"><div class="stat-val">25</div><div class="stat-label">Days total</div></div>
+        <div class="stat" style="border-top:3px solid #166534;"><div class="stat-val">4</div><div class="stat-label">Countries</div></div>
+        <div class="stat" style="border-top:3px solid #9a3412;"><div class="stat-val">20 Jun</div><div class="stat-label">Return</div></div>
+      </div>
+      <div class="rdiv"><div class="rline"></div><div class="rname" style="color:#6e6e73;">&#127462;&#127482; Departure</div><div class="rline"></div></div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d1">
+        <label class="day-header" for="d1"><span class="day-date">26 May</span><span class="day-title">Depart MKY &rarr; BNE &rarr; Singapore</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">QF1823 by 10:05 &middot; MKY T1</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; QF1823</span><span class="fb-val">MKY 10:35 &rarr; BNE 12:05</span><span class="fb-ref">F9Q758</span></div>
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">SQ236 by 12:45 &middot; BNE T1</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; SQ236</span><span class="fb-val">BNE 14:45 &rarr; SIN 20:45</span><span class="fb-ref">FIX44B</span></div>
+          </div>
+          <div class="di">Layover Singapore 3h 20min</div>
+          <div class="di">Wear Ariat jacket + waterproof shoes</div>
+          <div class="di">Carry-on: passport, power bank, shell jacket</div>
+        </div></div>
+      </div>
+      <div class="rdiv"><div class="rline"></div><div class="rname" style="color:#1e40af;">&#127475;&#127476; Norway</div><div class="rline"></div></div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d2">
+        <label class="day-header" for="d2"><span class="day-date">27 May</span><span class="day-title">SIN &rarr; CPH &rarr; OSL &rarr; Troms&oslash;</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#9992; SQ352</span><span class="fb-val">SIN 00:05 &rarr; CPH 07:10</span><span class="fb-ref">FIX44B</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; SQ2754</span><span class="fb-val">CPH 09:55 &rarr; OSL 11:05</span><span class="fb-ref">FIX44B</span></div>
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">SK4418 by 13:00 &middot; OSL</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; SK4418</span><span class="fb-val">OSL 13:40 &rarr; TOS 15:30</span><span class="fb-ref">YN6I4X</span></div>
+          </div>
+          <div class="di">Check in Aurora accommodation</div>
+          <div class="di">Light groceries &middot; early night</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d3">
+        <label class="day-header" for="d3"><span class="day-date">28 May</span><span class="day-title">Troms&oslash; &mdash; recovery</span><span class="day-tag tb">&#128205; Base</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Recovery day</div>
+          <div class="di">Buy snacks for next 2 days</div>
+          <div class="di">Confirm car pickup &mdash; Sixt Arrivals Hall 09:00 tomorrow</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d4">
+        <label class="day-header" for="d4"><span class="day-date">29 May</span><span class="day-title">Car pickup &middot; Troms&oslash; &rarr; Senja</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#128663; Pick up</span><span class="fb-val">Sixt &middot; Troms&oslash; Airport &middot; 09:00</span></div>
+            <div class="fb-row"><span class="fb-label">&#128205; Counter</span><span class="fb-val">Arrivals Hall &middot; In Terminal</span></div>
+            <div class="fb-row"><span class="fb-label">&#128273; Conf</span><span class="fb-val">9730228051</span><span class="fb-ref">Booking 781062659</span></div>
+          </div>
+          <div class="di">FULL tank immediately after pickup</div>
+          <div class="di">Stop Finnsnes &mdash; fuel + groceries</div>
+          <div class="di">Arrive Senja &middot; check in + relax</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d5">
+        <label class="day-header" for="d5"><span class="day-date">30 May</span><span class="day-title">Senja &mdash; scenic</span><span class="day-tag tb">&#128205; Base</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Scenic day</div>
+          <div class="di al">Check ferry status &mdash; IMPORTANT</div>
+          <div class="di">Refuel if needed</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d6">
+        <label class="day-header" for="d6"><span class="day-date">31 May</span><span class="day-title">Senja &rarr; Lofoten</span><span class="day-tag tc">&#9888; Critical</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di al">Check ferry 06:30 + night before &mdash; CRITICAL</div>
+          <div class="di">Full tank before depart</div>
+          <div class="di">Depart ~08:00 &mdash; arrive Gryllefjord early</div>
+          <div class="di">If ferry risk &rarr; drive backup route</div>
+          <div class="di">Fuel at Andenes &middot; Stop Sortland (food + rest)</div>
+          <div class="di">Arrive Svolv&aelig;r</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d7">
+        <label class="day-header" for="d7"><span class="day-date">1 Jun</span><span class="day-title">Svolv&aelig;r &rarr; Ramberg</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Short drive</div>
+          <div class="di">Stop Leknes &mdash; FULL grocery shop</div>
+          <div class="di">Check in Ramberg</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d8">
+        <label class="day-header" for="d8"><span class="day-date">2&ndash;3 Jun</span><span class="day-title">Lofoten base</span><span class="day-tag tb">&#128205; Base</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Scenic days</div>
+          <div class="di">Refuel in Leknes if below half</div>
+          <div class="di al">Check ferry evening 3 June</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d9">
+        <label class="day-header" for="d9"><span class="day-date">4 Jun</span><span class="day-title">Lofoten &rarr; Bod&oslash;</span><span class="day-tag tc">&#9888; Critical</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di al">Confirm ferry running</div>
+          <div class="di">Depart 07:30</div>
+          <div class="di">Fuel before Moskenes &middot; arrive 1 hr early</div>
+          <div class="di">Ferry to Bod&oslash; &middot; check in</div>
+          <div class="di">Prep for car return tomorrow 09:00</div>
+        </div></div>
+      </div>
+      <div class="rdiv"><div class="rline"></div><div class="rname" style="color:#991b1b;">&#127465;&#127472; Denmark</div><div class="rline"></div></div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d10">
+        <label class="day-header" for="d10"><span class="day-date">5 Jun</span><span class="day-title">Car return &middot; Bod&oslash; &rarr; Denmark</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#128663; Drop off</span><span class="fb-val">Sixt &middot; Bod&oslash; Airport &middot; 09:00</span></div>
+            <div class="fb-row"><span class="fb-label">&#128205; Address</span><span class="fb-val">Olav V Gate, Bod&oslash; 8004</span></div>
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">DY345 by 09:30 &middot; BOO</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; DY345/994</span><span class="fb-val">BOO 10:30 &rarr; BLL 16:05 (1 stop)</span><span class="fb-ref">YXUM7P</span></div>
+          </div>
+          <div class="di">Return car before heading to terminal</div>
+          <div class="di">Relax &mdash; no driving phase in Denmark</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d11">
+        <label class="day-header" for="d11"><span class="day-date">5&ndash;8 Jun</span><span class="day-title">Denmark &mdash; motorbike</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Ariat jacket + thermal layer</div>
+          <div class="di">Earplugs + neck buff</div>
+          <div class="di">Compact rain layer always accessible</div>
+        </div></div>
+      </div>
+      <div class="rdiv"><div class="rline"></div><div class="rname" style="color:#c2410c;">&#127475;&#127473; Amsterdam</div><div class="rline"></div></div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d12">
+        <label class="day-header" for="d12"><span class="day-date">9 Jun</span><span class="day-title">Billund &rarr; Amsterdam</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">KL1294 by 10:45 &middot; BLL</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; KL1294</span><span class="fb-val">BLL 11:45 &rarr; AMS 13:00</span><span class="fb-ref">YXXEOD</span></div>
+          </div>
+          <div class="di">Train Schiphol &rarr; Centraal</div>
+          <div class="di">Walk to Hotel Luxer</div>
+          <div class="di">Light walk + dinner</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d13">
+        <label class="day-header" for="d13"><span class="day-date">10 Jun</span><span class="day-title">Amsterdam &mdash; full day</span><span class="day-tag tb">&#128205; Base</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Walk canals</div>
+          <div class="di">Museums + evening central</div>
+        </div></div>
+      </div>
+      <div class="rdiv"><div class="rline"></div><div class="rname" style="color:#166534;">&#127470;&#127466; Ireland</div><div class="rline"></div></div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d14">
+        <label class="day-header" for="d14"><span class="day-date">11 Jun</span><span class="day-title">Amsterdam &rarr; Dublin &middot; Car pickup</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">EI605 by 12:20 &middot; AMS</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; EI605</span><span class="fb-val">AMS 13:20 &rarr; DUB 14:00</span><span class="fb-ref">22SF2S</span></div>
+            <div class="fb-row"><span class="fb-label">&#128663; Pick up</span><span class="fb-val">Ireland hire car &middot; 15:00 &middot; DUB</span></div>
+          </div>
+          <div class="di">Right-hand drive &mdash; adjust mindset</div>
+          <div class="di">Drive to hotel &middot; walk city</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d15">
+        <label class="day-header" for="d15"><span class="day-date">12 Jun</span><span class="day-title">Dublin &rarr; Glendalough</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Easy morning &middot; grocery stop (Tesco)</div>
+          <div class="di">Drive ~1.5 hrs &middot; check in &middot; light activity</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d16">
+        <label class="day-header" for="d16"><span class="day-date">13 Jun</span><span class="day-title">Festival day &mdash; Beyond the Pale</span><span class="day-tag tb">&#128205; Base</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">No driving &middot; stay local</div>
+          <div class="di">Beyond the Pale festival</div>
+          <div class="di">Prep for long drive tomorrow</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d17">
+        <label class="day-header" for="d17"><span class="day-date">14 Jun</span><span class="day-title">Glendalough &rarr; Cobh</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Depart 08:00 &mdash; long day &middot; fuel en route</div>
+          <div class="di">Arrive Cobh ~12:30</div>
+          <div class="di">Spike Island 2&ndash;3 hrs</div>
+          <div class="di">Check in &middot; reserve parking</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d18">
+        <label class="day-header" for="d18"><span class="day-date">15 Jun</span><span class="day-title">Cobh &rarr; Killarney</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Short drive ~1.5 hrs &middot; fuel before leaving</div>
+          <div class="di">Easy afternoon</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d19">
+        <label class="day-header" for="d19"><span class="day-date">16 Jun</span><span class="day-title">Killarney</span><span class="day-tag tb">&#128205; Base</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">National Park</div>
+          <div class="di">Optional scenic loop &middot; no long driving</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d20">
+        <label class="day-header" for="d20"><span class="day-date">17 Jun</span><span class="day-title">Killarney &rarr; Cliffs &rarr; Doolin</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Depart 08:30</div>
+          <div class="di">Arrive Cliffs ~13:00 &middot; stay 1.5&ndash;2 hrs</div>
+          <div class="di">Drive to Doolin &middot; park + walk pubs</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d21">
+        <label class="day-header" for="d21"><span class="day-date">18 Jun</span><span class="day-title">Doolin &rarr; Galway</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Depart 10:30 &middot; short drive ~1.5 hrs</div>
+          <div class="di">Check in &middot; taxi to city &middot; dinner + walk</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d22">
+        <label class="day-header" for="d22"><span class="day-date">19 Jun</span><span class="day-title">Galway &rarr; Dublin Airport</span><span class="day-tag td">&#128663; Drive</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="di">Depart 09:30 &middot; fuel before return</div>
+          <div class="di">Arrive ~13:00 &middot; return car 15:00</div>
+          <div class="di">Check in airport hotel &middot; pack + early sleep</div>
+        </div></div>
+      </div>
+      <div class="rdiv"><div class="rline"></div><div class="rname" style="color:#6e6e73;">&#127462;&#127482; Return</div><div class="rline"></div></div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d23">
+        <label class="day-header" for="d23"><span class="day-date">20 Jun</span><span class="day-title">Dublin &rarr; Amsterdam &rarr; Singapore</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">EI602 by 05:15 &middot; DUB T2</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; EI602</span><span class="fb-val">DUB 06:15 &rarr; AMS 08:55</span><span class="fb-ref">F3BSI8</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; SQ323</span><span class="fb-val">AMS 10:20 &rarr; SIN 05:30+1</span><span class="fb-ref">F3BSI8</span></div>
+          </div>
+          <div class="di">Wake ~03:30 &middot; shuttle to airport</div>
+          <div class="di">Seat 44G confirmed SQ323 (Forward Zone)</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d24">
+        <label class="day-header" for="d24"><span class="day-date">21 Jun</span><span class="day-title">Singapore &rarr; Brisbane</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#9992; SQ265</span><span class="fb-val">SIN 07:20 &rarr; BNE 16:55</span><span class="fb-ref">F3BSI8</span></div>
+          </div>
+          <div class="di">Seat 42C confirmed (Forward Zone)</div>
+          <div class="di">Layover Singapore 1h 50min</div>
+        </div></div>
+      </div>
+      <div class="day-card"><input class="day-chk" type="checkbox" id="d25">
+        <label class="day-header" for="d25"><span class="day-date">22 Jun</span><span class="day-title">Brisbane &rarr; Mackay</span><span class="day-tag tf">&#9992; Flight</span><span class="chev">&#9662;</span></label>
+        <div class="day-body"><div class="day-inner">
+          <div class="flight-banner">
+            <div class="fb-row"><span class="fb-label">&#10003; Check-in</span><span class="fb-val">QF1826 by 12:15 &middot; BNE T D</span></div>
+            <div class="fb-row"><span class="fb-label">&#9992; QF1826</span><span class="fb-val">BNE 12:45 &rarr; MKY 14:30</span><span class="fb-ref">F9Q758</span></div>
+          </div>
+          <div class="di">Home!</div>
+        </div></div>
+      </div>
+    </div><!-- /p1 -->
+
+    <!-- FLIGHTS -->
+    <div class="panel" id="p2">
+      <div class="leg-head"><div class="leg-line"></div><div class="leg-name" style="color:#6e6e73;">&#127462;&#127482; Outbound &mdash; Australia to Norway</div><div class="leg-line"></div></div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 10:05 AM</div><div class="fcard-head"><div class="fcard-route">Mackay &rarr; Brisbane</div><div class="fcard-airline">Qantas &middot; QF1823 &middot; Embraer 190</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">10:35 AM</div><div class="fblock-sub">26 May &middot; MKY</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">12:05 PM</div><div class="fblock-sub">26 May &middot; BNE T D</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 30m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>F9Q758</strong></span><span class="fref-item">Baggage <strong>23kg</strong></span></div></div>
+      <div class="layover">&#9660; Layover Brisbane &mdash; connect to international terminal</div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 12:45 PM &middot; BNE Terminal 1</div><div class="fcard-head"><div class="fcard-route">Brisbane &rarr; Singapore</div><div class="fcard-airline">Singapore Airlines &middot; SQ236 &middot; A350-900</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">2:45 PM</div><div class="fblock-sub">26 May &middot; BNE T1</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">8:45 PM</div><div class="fblock-sub">26 May &middot; SIN Changi</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">8h 00m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>FIX44B</strong></span><span class="fref-item">Baggage <strong>30kg</strong></span></div></div>
+      <div class="layover">&#9660; Layover Singapore Changi &mdash; 3h 20min &middot; Terminal 3</div>
+      <div class="fcard"><div class="fcard-head"><div class="fcard-route">Singapore &rarr; Copenhagen</div><div class="fcard-airline">Singapore Airlines &middot; SQ352 &middot; A350-900</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">12:05 AM</div><div class="fblock-sub">27 May &middot; SIN T3</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">7:10 AM</div><div class="fblock-sub">27 May &middot; CPH T3</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">13h 05m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>FIX44B</strong></span></div></div>
+      <div class="layover">&#9660; Layover Copenhagen &mdash; 2h 45min &middot; Terminal 3</div>
+      <div class="fcard"><div class="fcard-head"><div class="fcard-route">Copenhagen &rarr; Oslo</div><div class="fcard-airline">Scandinavian Airlines &middot; SQ2754 &middot; A320neo</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">9:55 AM</div><div class="fblock-sub">27 May &middot; CPH T3</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">11:05 AM</div><div class="fblock-sub">27 May &middot; OSL</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 10m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>FIX44B</strong></span></div></div>
+      <div class="layover">&#9660; Layover Oslo &mdash; 2h 35min</div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 13:00 &middot; OSL</div><div class="fcard-head"><div class="fcard-route">Oslo &rarr; Troms&oslash;</div><div class="fcard-airline">Scandinavian Airlines &middot; SK4418</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">1:40 PM</div><div class="fblock-sub">27 May &middot; OSL</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">3:30 PM</div><div class="fblock-sub">27 May &middot; TOS</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 50m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>YN6I4X</strong></span><span class="fref-item">Baggage <strong>1PC</strong></span></div></div>
+      <div class="leg-head"><div class="leg-line"></div><div class="leg-name" style="color:#1e40af;">Norway &rarr; Denmark</div><div class="leg-line"></div></div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 09:30 &middot; BOO &middot; Return Sixt car first</div><div class="fcard-head"><div class="fcard-route">Bod&oslash; &rarr; Billund</div><div class="fcard-airline">Norwegian Air Shuttle &middot; DY345/DY994 &middot; 1 stop</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">10:30 AM</div><div class="fblock-sub">5 Jun &middot; BOO</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">4:05 PM</div><div class="fblock-sub">5 Jun &middot; BLL</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">5h 35m</div><div class="fblock-sub">1 stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>YXUM7P</strong></span><span class="fref-item">Seat <strong>8C</strong></span><span class="fref-item">Baggage <strong>23kg</strong></span></div></div>
+      <div class="leg-head"><div class="leg-line"></div><div class="leg-name" style="color:#991b1b;">Denmark &rarr; Amsterdam</div><div class="leg-line"></div></div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 10:45 AM &middot; BLL</div><div class="fcard-head"><div class="fcard-route">Billund &rarr; Amsterdam</div><div class="fcard-airline">KLM &middot; KL1294</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">11:45 AM</div><div class="fblock-sub">9 Jun &middot; BLL</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">1:00 PM</div><div class="fblock-sub">9 Jun &middot; AMS</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 15m</div><div class="fblock-sub">Direct</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>YXXEOD</strong></span></div></div>
+      <div class="leg-head"><div class="leg-line"></div><div class="leg-name" style="color:#c2410c;">Amsterdam &rarr; Dublin</div><div class="leg-line"></div></div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 12:20 PM &middot; AMS Schiphol</div><div class="fcard-head"><div class="fcard-route">Amsterdam &rarr; Dublin</div><div class="fcard-airline">Aer Lingus &middot; EI605 &middot; A320</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">1:20 PM</div><div class="fblock-sub">11 Jun &middot; AMS</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">2:00 PM</div><div class="fblock-sub">11 Jun &middot; DUB</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 40m</div><div class="fblock-sub">Direct</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>22SF2S</strong></span><span class="fref-item">Baggage <strong>checked + hand included</strong></span></div></div>
+      <div class="leg-head"><div class="leg-line"></div><div class="leg-name" style="color:#166534;">&#127470;&#127466; Return &mdash; Ireland to Australia</div><div class="leg-line"></div></div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 05:15 AM &middot; DUB Terminal 2</div><div class="fcard-head"><div class="fcard-route">Dublin &rarr; Amsterdam</div><div class="fcard-airline">Aer Lingus &middot; EI602 &middot; A320</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">6:15 AM</div><div class="fblock-sub">20 Jun &middot; DUB T2</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">8:55 AM</div><div class="fblock-sub">20 Jun &middot; AMS</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 40m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>F3BSI8</strong></span></div></div>
+      <div class="layover">&#9660; Layover Amsterdam &mdash; 1h 25min</div>
+      <div class="fcard"><div class="fcard-head"><div class="fcard-route">Amsterdam &rarr; Singapore</div><div class="fcard-airline">Singapore Airlines &middot; SQ323 &middot; A350-900</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">10:20 AM</div><div class="fblock-sub">20 Jun &middot; AMS</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">5:30 AM</div><div class="fblock-sub">21 Jun &middot; SIN</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">13h 10m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>F3BSI8</strong></span><span class="fref-item">Seat <strong>44G Forward Zone</strong></span></div></div>
+      <div class="layover">&#9660; Layover Singapore &mdash; 1h 50min</div>
+      <div class="fcard"><div class="fcard-head"><div class="fcard-route">Singapore &rarr; Brisbane</div><div class="fcard-airline">Singapore Airlines &middot; SQ265 &middot; A350-900</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">7:20 AM</div><div class="fblock-sub">21 Jun &middot; SIN T3</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">4:55 PM</div><div class="fblock-sub">21 Jun &middot; BNE T1</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">7h 35m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>F3BSI8</strong></span><span class="fref-item">Seat <strong>42C Forward Zone</strong></span></div></div>
+      <div class="leg-head"><div class="leg-line"></div><div class="leg-name" style="color:#6e6e73;">&#127462;&#127482; Domestic Return</div><div class="leg-line"></div></div>
+      <div class="fcard"><div class="fcard-checkin">&#10003; Check-in by 12:15 PM &middot; BNE Terminal D</div><div class="fcard-head"><div class="fcard-route">Brisbane &rarr; Mackay</div><div class="fcard-airline">Qantas &middot; QF1826 &middot; Embraer 190</div></div><div class="fcard-body"><div class="fblock"><div class="fblock-label">Departs</div><div class="fblock-val">12:45 PM</div><div class="fblock-sub">22 Jun &middot; BNE T D</div></div><div class="fblock"><div class="fblock-label">Arrives</div><div class="fblock-val">2:30 PM</div><div class="fblock-sub">22 Jun &middot; MKY</div></div><div class="fblock"><div class="fblock-label">Duration</div><div class="fblock-val">1h 45m</div><div class="fblock-sub">Non-stop</div></div></div><div class="fcard-ref"><span class="fref-item">Ref <strong>F9Q758</strong></span></div></div>
+    </div><!-- /p2 -->
+
+    <!-- CAR HIRE -->
+    <div class="panel" id="p3">
+      <div class="car-card">
+        <div class="car-header" style="background:#1e3a5f;">
+          <div class="car-header-title">&#127475;&#127476; Norway &mdash; Sixt</div>
+          <div class="car-header-sub">Toyota Yaris Cross or similar SUV &middot; Automatic &middot; Unlimited mileage</div>
+        </div>
+        <div class="car-conf" style="background:#dbeafe;color:#1e40af;">Confirmation: 9730228051 &middot; Booking: 781062659</div>
+        <div class="car-section">
+          <div class="car-section-title">Pick-up</div>
+          <div class="car-row"><span class="car-row-label">Date &amp; time</span><span class="car-row-val">Fri 29 May &middot; 09:00</span></div>
+          <div class="car-row"><span class="car-row-label">Location</span><span class="car-row-val">Troms&oslash; Airport Langnes</span></div>
+          <div class="car-row"><span class="car-row-label">Counter</span><span class="car-row-val">Arrivals Hall &middot; In Terminal</span></div>
+          <div class="car-row"><span class="car-row-label">Address</span><span class="car-row-val">Flyplassveien 31, Troms&oslash; 9016</span></div>
+          <div class="car-row"><span class="car-row-label">Phone</span><span class="car-row-val">+47 81 522 466</span></div>
+        </div>
+        <div class="car-section">
+          <div class="car-section-title">Drop-off</div>
+          <div class="car-row"><span class="car-row-label">Date &amp; time</span><span class="car-row-val">Fri 5 Jun &middot; 09:00</span></div>
+          <div class="car-row"><span class="car-row-label">Location</span><span class="car-row-val">Bod&oslash; Airport &middot; In Terminal</span></div>
+          <div class="car-row"><span class="car-row-label">Address</span><span class="car-row-val">Olav V Gate, Bod&oslash; 8004</span></div>
+          <div class="car-row"><span class="car-row-label">Phone</span><span class="car-row-val">+47 81 522 466</span></div>
+        </div>
+        <div class="car-section">
+          <div class="car-section-title">Included in price</div>
+          <div class="car-row"><span class="car-row-label">Mileage</span><span class="car-row-val">Unlimited</span></div>
+          <div class="car-row"><span class="car-row-label">CDW + Theft Protection</span><span class="car-row-val">&#10003; Included</span></div>
+          <div class="car-row"><span class="car-row-label">Excess</span><span class="car-row-val">AUD 2,261</span></div>
+          <div class="car-row"><span class="car-row-label">Extra protection</span><span class="car-row-val">&#10003; Pre-paid</span></div>
+          <div class="car-row"><span class="car-row-label">Duration</span><span class="car-row-val">7 days</span></div>
+        </div>
+        <div class="car-section">
+          <div class="car-section-title">Bring to counter</div>
+          <div class="car-row"><span class="car-row-label">Documents</span><span class="car-row-val">Passport + flight ticket + voucher</span></div>
+          <div class="car-alert">&#9888;&#65039; Voucher must be presented at counter &mdash; printed or digital. Car will not be released without it.</div>
+        </div>
+      </div>
+      <div class="car-card">
+        <div class="car-header" style="background:#166534;">
+          <div class="car-header-title">&#127470;&#127466; Ireland &mdash; Carhire / Europcar</div>
+          <div class="car-header-sub">Hyundai Tucson or similar SUV &middot; Manual &middot; Unlimited mileage</div>
+        </div>
+        <div class="car-conf" style="background:#dcfce7;color:#166534;">Confirmation: PTC:1348210 &middot; Booking: 742362173</div>
+        <div class="car-section">
+          <div class="car-section-title">Pick-up</div>
+          <div class="car-row"><span class="car-row-label">Date &amp; time</span><span class="car-row-val">Thu 11 Jun &middot; 15:00</span></div>
+          <div class="car-row"><span class="car-row-label">Location</span><span class="car-row-val">Dublin Airport</span></div>
+          <div class="car-row"><span class="car-row-label">Counter</span><span class="car-row-val">Arrivals Hall &middot; Car Rental Centre</span></div>
+          <div class="car-row"><span class="car-row-label">Address</span><span class="car-row-val">Dublin Airport, Dublin K67 A7P4</span></div>
+          <div class="car-row"><span class="car-row-label">Phone</span><span class="car-row-val">+353 61 206 088</span></div>
+          <div class="car-alert">&#128652; Follow signs for &lsquo;Car Rental&rsquo; &rarr; take Europcar/Carhire shuttle bus to Car Rental Centre</div>
+        </div>
+        <div class="car-section">
+          <div class="car-section-title">Drop-off</div>
+          <div class="car-row"><span class="car-row-label">Date &amp; time</span><span class="car-row-val">Fri 19 Jun &middot; 15:00</span></div>
+          <div class="car-row"><span class="car-row-label">Location</span><span class="car-row-val">Dublin Airport</span></div>
+          <div class="car-row"><span class="car-row-label">Address</span><span class="car-row-val">Dublin Airport, Dublin K67 A7P4</span></div>
+          <div class="car-row"><span class="car-row-label">Phone</span><span class="car-row-val">+353 61 206 088</span></div>
+          <div class="car-alert">&#128652; Take M1 north towards Belfast &rarr; exit 2 Dublin Airport &rarr; follow Car Rental signs &rarr; park outside office &rarr; shuttle to terminal</div>
+        </div>
+        <div class="car-section">
+          <div class="car-section-title">Included in price</div>
+          <div class="car-row"><span class="car-row-label">Mileage</span><span class="car-row-val">Unlimited</span></div>
+          <div class="car-row"><span class="car-row-label">CDW + Theft Protection</span><span class="car-row-val">&#10003; Included</span></div>
+          <div class="car-row"><span class="car-row-label">Excess</span><span class="car-row-val">&euro;2,500</span></div>
+          <div class="car-row"><span class="car-row-label">Extra protection</span><span class="car-row-val">&#10003; Pre-paid</span></div>
+          <div class="car-row"><span class="car-row-label">Duration</span><span class="car-row-val">8 days</span></div>
+        </div>
+        <div class="car-section">
+          <div class="car-section-title">Bring to counter</div>
+          <div class="car-row"><span class="car-row-label">Documents</span><span class="car-row-val">Passport + flight ticket + voucher</span></div>
+          <div class="car-alert">&#9888;&#65039; Voucher must be presented at counter &mdash; printed or digital. Remember: left-hand traffic in Ireland &mdash; right-hand drive car.</div>
+        </div>
+      </div>
+    </div><!-- /p3 -->
+
+    <!-- MEDIA -->
+    <div class="panel" id="p4">
+      <p class="sh">Daily goal &mdash; under 15 min</p>
+      <div class="ms"><div class="sn">1</div><div><div class="st">During the day</div><div class="stitle">Capture</div><div class="sd">5&ndash;10 photos per stop &middot; 5&ndash;8 clips (5&ndash;15 sec each) &middot; Polarsteps tracking ON in background</div></div></div>
+      <div class="ms"><div class="sn">2</div><div><div class="st">Evening &middot; 3 min &middot; iPhone</div><div class="stitle">Clean &amp; select</div><div class="sd">Delete poor shots. Star 5&ndash;10 photos + 3&ndash;5 clips. Nothing else.</div></div></div>
+      <div class="ms"><div class="sn">3</div><div><div class="st">Evening &middot; 5 min &middot; Tablet</div><div class="stitle">Polarsteps update</div><div class="sd">Add location step &middot; upload 2&ndash;4 photos &middot; write 2&ndash;3 sentences</div></div></div>
+      <div class="ms"><div class="sn">4</div><div><div class="st">Every 2&ndash;3 days &middot; 5&ndash;10 min &middot; iPhone</div><div class="stitle">Create reel (CapCut)</div><div class="sd">6 clips: opening &rarr; movement &rarr; feature &rarr; detail &rarr; scenic &rarr; outro &middot; Hard cuts &middot; 12&ndash;20 sec &middot; ALL CAPS white Montserrat &middot; Post IG &rarr; auto-shares Facebook</div></div></div>
+      <div class="ms"><div class="sn">5</div><div><div class="st">Every 2&ndash;3 days &middot; Tablet</div><div class="stitle">YouTube upload (EES QLD)</div><div class="sd">Title: Location &ndash; Region | Europe 2026 &middot; Add to playlist &middot; Paste Polarsteps link in description</div></div></div>
+      <p class="sh">Music &mdash; pre-select before departure</p>
+      <div class="br"><span class="badge">&#127956; Norway &mdash; cinematic</span><span class="badge">&#128692; Denmark &mdash; upbeat</span><span class="badge">&#127808; Ireland &mdash; acoustic</span></div>
+      <p class="note">Pre-select 10&ndash;15 tracks. Reuse them. Never search for music daily.</p>
+      <p class="sh">CapCut text format</p>
+      <div class="cc">REINE &ndash; LOFOTEN<br>NORWAY</div>
+      <p class="note">ALL CAPS &middot; white Montserrat or Poppins &middot; location line 1, country line 2</p>
+      <p class="sh">Storage rule</p>
+      <p style="font-size:13px;color:#48484a;line-height:1.6">Record 1080p (not 4K). Delete unused clips every 2&ndash;3 days. Keep starred only. Back up to Google Photos on WiFi.</p>
+    </div><!-- /p4 -->
+
+    <!-- PACK -->
+    <div class="panel" id="p5">
+      <p class="sh">&#128196; Documents &mdash; critical</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Passport</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Driver's licence (physical)</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Credit cards &mdash; minimum 2</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Debit card</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Travel insurance</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Flight confirmations (offline PDF)</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Car hire confirmations &mdash; Norway + Ireland</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Booking.com PDFs downloaded</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Airline apps installed</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Google Maps offline &mdash; all regions</span></div>
+      <p class="sh">&#129405; Wear on flight</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Ariat lined canvas jacket</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Jeans</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Waterproof walking shoes</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Long sleeve shirt</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Track pants or comfortable travel pants</span></div>
+      <p class="sh">&#128085; Packed clothing</p>
+      <div class="cr"><input type="checkbox"><span class="cl">3&times; quick-dry shirts</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">2&times; T-shirts</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">1&times; fleece / mid-layer</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">2&times; thermal tops</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">2&times; hiking/travel pants</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">1&times; track pants</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">1&times; shorts</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">7&ndash;8&times; underwear</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">5&ndash;6&times; short socks</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">2&times; hiking socks</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Beanie + gloves</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Neck buff</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Waterproof shell jacket (windproof)</span></div>
+      <p class="sh">&#128187; Tech &amp; electrical</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Phone + charger (USB-C fast)</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">EU plug adapter</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Power bank</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Charging cables &times;2</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Headphones</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Compact extension lead</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Car charging adapter</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">AirTag for luggage</span></div>
+      <p class="sh">&#128663; Driving &amp; road</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Phone mount &mdash; critical for navigation</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Sunglasses</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Reusable water bottle</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Snacks + electrolytes</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Wet wipes + small rubbish bags</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Coins/card for parking</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Earplugs (motorbike &mdash; Denmark)</span></div>
+      <p class="sh">&#10003; Nice to have</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Travel towel</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Laundry kit + travel detergent</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Notebook</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Torch/headlamp</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Ziplock bags</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Compact umbrella</span></div>
+      <div class="banner">&#9878;&#65039; <strong>Weight strategy:</strong> Wear heavy items on flights. Target 18&ndash;20 kg checked. Leave room for souvenirs.</div>
+    </div><!-- /p5 -->
+
+    <!-- SYSTEMS -->
+    <div class="panel" id="p6">
+      <p class="sh">&#128241; iPhone 17 &mdash; 12 days out</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Confirm Apple ID password stored securely</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Verify trusted phone numbers</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Enable Find My iPhone</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Complete transfer from old phone &mdash; contacts, photos, notes, calendar, passwords, authenticator apps</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Test Bluetooth &mdash; vehicle, AirPods, Watch</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Enable Wi-Fi Calling + roaming controls</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Configure Focus modes: Travel, Sleep, Work</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Set up Control Centre &mdash; torch, VPN, hotspot, wallet</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Confirm international roaming OR install travel eSIM (Airalo / Nomad / Holafly)</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Test hotspot functionality</span></div>
+      <p class="sh">&#128179; Money &amp; banking</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Primary card + backup card + emergency card stored separately</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Notify banks of Europe travel if required</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Confirm international withdrawals enabled + limits reviewed</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Load cards + boarding passes into Apple Wallet</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Wise: verify identity, add AUD account, create EUR balance, test transfer</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Small amount of Euros ready for arrival</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Install: Wise, Revolut, XE Currency</span></div>
+      <p class="sh">&#9200; 72-hour checklist</p>
+      <div class="cr"><input type="checkbox"><span class="cl">3 days before: check weather, download entertainment, charge all devices, reconfirm accommodation</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">24 hrs before: online check-in, download boarding passes, verify passport, confirm eSIM active, charge power bank</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">All 2FA apps migrated to iPhone 17 &mdash; banking, email, Apple ID, Google, Microsoft</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Sync critical project folders offline &mdash; OneDrive, Xero, WorkGuru access confirmed</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Export emergency contacts + card cancellation numbers to offline doc</span></div>
+      <p class="sh">&#128747; Departure day &mdash; grab list</p>
+      <div class="cr"><input type="checkbox"><span class="cl">Wallet</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Passport</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Phone</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Charger</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Headphones</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Medications</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Backup card</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">EU adapter</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">Power bank</span></div>
+      <div class="cr"><input type="checkbox"><span class="cl">AirPods</span></div>
+    </div><!-- /p6 -->
+  </div><!-- /panels -->
+</div><!-- /hub -->
+</body>
+</html>
